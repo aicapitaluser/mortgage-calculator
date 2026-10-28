@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortgage Calculator | A I Capital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#f2f1ec;--card:#fff;--ink:#0d1e2c;--mute:#5f6b75;--line:#e1ded3;--navy:#0a1825;--navy2:#1b3b4e;--accent:#0d1e2c;--accent-ink:#fff;--accent-soft:#f4edd2;--gold:#d8b560;--gold-ink:#8a6d22;--pos:#2f8f5b;--warn:#b0452e;--warn-soft:#fbe9e3;--int:#d8b560;--pri:#1b3b4e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Sora,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:16px}
+header{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;border-radius:18px;padding:20px;margin:8px 0 16px}
+.brandrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.mark{display:inline-block;border:1px solid rgba(216,181,96,.6);border-radius:8px;padding:6px 12px;font-weight:700;letter-spacing:.08em;font-size:.95rem}
+.mark small{display:block;font-size:.55rem;letter-spacing:.2em;color:var(--gold);font-weight:600}
+h1{font-size:1.9rem;margin:0;letter-spacing:.02em;text-transform:uppercase;font-weight:800}
+.sub{color:var(--gold);font-size:.92rem;margin:6px 0 0}
+.grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.grid>*{min-width:0}
+html,body{overflow-x:hidden}
+@media(min-width:860px){.grid{grid-template-columns:380px minmax(0,1fr);align-items:start}}
+@media(max-width:560px){
+  .wrap{padding:10px}
+  header{padding:14px;border-radius:16px;margin:4px 0 12px}
+  .brandrow{margin-bottom:12px}
+  h1{font-size:1.35rem}
+  .sub{font-size:.82rem}
+  .grid,.stack>*+*{gap:12px}.stack>*+*{margin-top:12px}
+  .card{padding:14px;border-radius:14px}
+  .f{margin-bottom:14px}
+  .in input{font-size:1rem;padding:9px 0}
+  .hero .big{font-size:1.9rem}
+  .stats{gap:10px}
+  .stat .v{font-size:1rem}
+  th,td{padding:7px 3px;font-size:.72rem}
+  th{font-size:.64rem}
+  .card{overflow-x:auto}
+  .actions button{flex:1 1 100%}
+  table{table-layout:auto}
+}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(13,30,44,.05)}
+.card h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold-ink);margin:0 0 12px;font-weight:700}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:.9rem;font-weight:600;margin-bottom:6px}
+.in{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:var(--bg)}
+.in:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px var(--accent-soft)}
+.in input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.1rem;padding:10px 0;outline:0}
+.u{color:var(--mute);font-size:.85rem}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:8px}
+.two .in{padding:0 10px}
+input[type=range]{width:100%;margin:10px 0 0;accent-color:var(--gold-ink)}
+select,input[type=month]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+header select{padding:6px 8px;background:transparent;color:#fff;border-color:rgba(216,181,96,.6)}
+header select option{color:#0d1e2c}
+.chk{display:flex;gap:8px;align-items:center;font-weight:600;font-size:.9rem;cursor:pointer}
+.chk input{width:18px;height:18px;accent-color:var(--gold-ink)}
+.costs{margin-top:12px}
+.hero{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;border:0}
+.hero .lbl{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.hero .big{font-size:2.5rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;color:#fff}
+.hero .note{font-size:.85rem;color:var(--gold);margin-top:2px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+@media(min-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat .k{font-size:.78rem;color:var(--mute)}
+.stat .v{font-size:1.1rem;font-weight:650;font-variant-numeric:tabular-nums}
+.bar{display:flex;height:12px;border-radius:99px;overflow:hidden;margin:16px 0 6px;background:var(--line)}
+.bar i{display:block;height:100%}
+.legend{display:flex;gap:16px;font-size:.82rem;color:var(--mute);flex-wrap:wrap}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:baseline}
+.call{border-radius:10px;padding:10px 12px;font-size:.9rem;margin-top:16px;background:var(--accent-soft)}
+.call.warn{background:var(--warn-soft);color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:8px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{background:#142a3a;color:#fff;font-weight:600;font-size:.75rem}
+th:first-child{border-radius:8px 0 0 8px}th:last-child{border-radius:0 8px 8px 0}
+tr.tot td{background:#f4edd2;border-bottom:0}
+td.pos{color:var(--warn)}td.neg{color:var(--pos)}
+.stack>*+*{margin-top:16px}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--mute);font-size:11px}
+details summary{cursor:pointer;font-weight:600;font-size:.9rem}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-weight:600;border-radius:10px;padding:10px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.pri{background:var(--navy);color:var(--gold);border-color:var(--navy);letter-spacing:.02em}
+.fine{color:var(--mute);font-size:.78rem}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:14px}
+.seg label{cursor:pointer;position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;text-align:center;padding:9px 4px;border-radius:9px;font-weight:600;font-size:.88rem;color:var(--mute)}
+.seg input:checked+span{background:var(--navy);color:var(--gold)}
+.seg input:focus-visible+span{outline:2px solid var(--gold)}
+.planhd{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold-ink);font-weight:700;margin:4px 0 12px}
+#rowPlan{border-top:1px solid var(--line);margin-top:4px;padding-top:12px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:99px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+@media print{.actions,input[type=range],header select,#toast,.noprint{display:none!important}body{background:#fff}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brandrow">
+      <span class="mark">A I CAPITAL<small>REAL ESTATE</small></span>
+      <select id="cur" data-k="c" aria-label="Currency">
+        <option>AED</option><option>USD</option><option>EUR</option><option>GBP</option><option>SAR</option><option>CAD</option><option>AUD</option>
+      </select>
+    </div>
+    <h1>Mortgage Calculator</h1>
+    <p class="sub">Change any number. Your results update instantly.</p>
+  </header>
+
+  <div class="grid">
+    <form class="card" id="form" onsubmit="return false">
+      <div class="seg" role="radiogroup" aria-label="Calculator mode">
+        <label><input type="radio" name="m" data-k="m" value="s"><span>Standard</span></label>
+        <label><input type="radio" name="m" data-k="m" value="r"><span>Secondary</span></label>
+        <label><input type="radio" name="m" data-k="m" value="o"><span>Off-plan</span></label>
+      </div>
+      <p class="fine" id="modeNote" style="margin:-6px 0 16px"></p>
+      <h2>Your numbers</h2>
+      <div id="fields"></div>
+      <div class="f">
+        <label for="s">First payment month</label>
+        <input type="month" id="s" data-k="s">
+      </div>
+      <label class="chk"><input type="checkbox" id="fchk" data-k="f"> Include buying costs</label>
+      <div class="costs" id="costs" hidden>
+        <div class="two">
+          <div class="f"><label for="n_tf">Transfer fee</label><div class="in"><input type="text" id="n_tf" data-k="tf" inputmode="decimal" autocomplete="off"><span class="u">% price</span></div></div>
+          <div class="f"><label for="n_ag">Agency fee</label><div class="in"><input type="text" id="n_ag" data-k="ag" inputmode="decimal" autocomplete="off"><span class="u">% price</span></div></div>
+          <div class="f"><label for="n_tr">Trustee office fee</label><div class="in"><input type="text" id="n_tr" data-k="tr" inputmode="decimal" autocomplete="off"><span class="u">% price</span></div></div>
+          <div class="f"><label for="n_mr">Mortgage registration</label><div class="in"><input type="text" id="n_mr" data-k="mr" inputmode="decimal" autocomplete="off"><span class="u">% loan</span></div></div>
+          <div class="f"><label for="n_bf">Bank arrangement fee</label><div class="in"><input type="text" id="n_bf" data-k="bf" inputmode="decimal" autocomplete="off"><span class="u">% loan</span></div></div>
+        </div>
+        <div class="f"><label for="n_of">Other fixed costs (valuation, trustee, etc.)</label><div class="in"><input type="text" id="n_of" data-k="of" inputmode="decimal" autocomplete="off"><span class="u cur"></span></div></div>
+        <p class="fine">Defaults follow typical Dubai rates. Edit to match your case.</p>
+      </div>
+    </form>
+
+    <div class="stack" id="out"></div>
+  </div>
+  <p class="fine" style="margin-top:16px"><b>A I Capital Mortgage Calculator 1.0.</b> Estimate only. Assumes a fixed rate for the full term and equal monthly payments. Your bank's offer is the final word.</p>
+</div>
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const CUR = ['AED','USD','EUR','GBP','SAR','CAD','AUD'];
+const nm = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+const def = {p:1500000, d:20, r:4.5, y:25, x:0, c:'AED',
+  s:nm.getFullYear() + '-' + String(nm.getMonth() + 1).padStart(2, '0'),
+  f:0, tf:4, ag:2, tr:0.25, mr:0.25, bf:1, of:0,
+  m:'s', ob:20, oc:40, om:24};
+const S = {...def};
+const strKeys = ['c', 's', 'm'];
+const MODE_NOTE = {
+  s:'Standard mortgage calculator.',
+  r:'Secondary (ready) property: adds buying costs and the total cost of the purchase.',
+  o:'Off-plan: set your payment plan. The mortgage covers the handover payment and starts after handover.'
+};
+
+function load() {
+  const q = new URLSearchParams(location.hash.slice(1));
+  for (const k in def) {
+    if (!q.has(k)) continue;
+    const v = q.get(k);
+    S[k] = strKeys.includes(k) ? v : (isFinite(+v) ? +v : def[k]);
+  }
+  if (!CUR.includes(S.c)) S.c = def.c;
+  if (!/^\d{4}-\d{2}$/.test(S.s)) S.s = def.s;
+  if (!MODE_NOTE[S.m]) S.m = def.m;
+}
+function save() {
+  const q = new URLSearchParams();
+  for (const k in S) if (S[k] !== def[k]) q.set(k, S[k]);
+  const h = q.toString();
+  try { history.replaceState(null, '', h ? '#' + h : location.pathname + location.search); }
+  catch (e) { location.hash = h; }
+}
+
+const fmtCache = {};
+function money(dec) {
+  const key = S.c + dec;
+  return fmtCache[key] || (fmtCache[key] = new Intl.NumberFormat('en-US', {style:'currency', currency:S.c, currencyDisplay:'code', minimumFractionDigits:dec, maximumFractionDigits:dec}));
+}
+const m0 = v => money(0).format(v);
+const m2 = v => money(2).format(v);
+const dur = n => { const y = Math.floor(n / 12), m = n % 12; return (y ? y + ' yr' + (y > 1 ? 's' : '') : '') + (y && m ? ' ' : '') + (m ? m + ' mo' : '') || '0 mo'; };
+
+function amortize(L, rate, yrs, extra) {
+  const n = yrs * 12, r = rate / 1200;
+  const pmt = L <= 0 ? 0 : (r === 0 ? L / n : L * r / (1 - Math.pow(1 + r, -n)));
+  let bal = L, ti = 0, m = 0;
+  const bals = [], years = [];
+  while (L > 0 && bal > 0.005 && m < n + 1) {
+    const i = bal * r;
+    let pr = pmt - i + extra;
+    if (pr > bal) pr = bal;
+    bal -= pr; ti += i; m++;
+    bals.push(bal);
+    const yi = Math.floor((m - 1) / 12);
+    const row = years[yi] || (years[yi] = {y:yi + 1, pr:0, i:0, bal:0});
+    row.pr += pr; row.i += i; row.bal = bal;
+  }
+  return {pmt, months:m, ti, paid:L + ti, bals, years};
+}
+
+function when(startStr, addMonths) {
+  const [y, mo] = startStr.split('-').map(Number);
+  return new Date(y, mo - 1 + addMonths, 1).toLocaleDateString('en', {month:'short', year:'numeric'});
+}
+
+function chart(A, B, loan) {
+  if (loan <= 0 || !B.months) return '';
+  const W = 600, H = 200, pl = 8, pr = 8, pt = 8, pb = 22, n = B.months;
+  const X = m => pl + (W - pl - pr) * m / n;
+  const Y = v => pt + (H - pt - pb) * (1 - v / loan);
+  const line = a => 'M' + X(0).toFixed(1) + ',' + Y(loan).toFixed(1) + a.bals.map((v, i) => 'L' + X(i + 1).toFixed(1) + ',' + Y(v).toFixed(1)).join('');
+  const area = line(A) + 'L' + X(A.months).toFixed(1) + ',' + Y(0).toFixed(1) + 'L' + X(0).toFixed(1) + ',' + Y(0).toFixed(1) + 'Z';
+  const ticks = [0, .25, .5, .75, 1].map(f => {
+    const m = Math.round(n * f);
+    return `<text x="${X(m).toFixed(1)}" y="${H - 6}" text-anchor="${f === 0 ? 'start' : f === 1 ? 'end' : 'middle'}">${f === 0 ? 'Start' : 'Year ' + (m / 12).toFixed(m % 12 ? 1 : 0)}</text>`;
+  }).join('');
+  const dashed = A.months !== B.months ? `<path d="${line(B)}" fill="none" stroke="var(--mute)" stroke-width="1.5" stroke-dasharray="4 4"/>` : '';
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Remaining balance over time">
+    <path d="${area}" fill="var(--gold)" opacity=".3"/>
+    ${dashed}
+    <path d="${line(A)}" fill="none" stroke="var(--pri)" stroke-width="2.5"/>
+    <line x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)"/>
+    ${ticks}</svg>`;
+}
+
+function render() {
+  const price = Math.max(S.p, 0);
+  const mode = S.m;
+  const ob = Math.min(100, S.ob), oc = Math.min(100 - ob, S.oc), oh = 100 - ob - oc;
+  const om = Math.max(1, Math.min(120, Math.round(S.om)));
+  const off = mode === 'o' ? om + 1 : 0;
+  const dPct = mode === 'o' ? ob + oc : S.d;
+  const down = Math.min(price * dPct / 100, price);
+  const loan = price - down;
+  const yrs = Math.min(40, Math.max(1, Math.round(S.y)));
+  const rate = Math.max(S.r, 0), extra = Math.max(S.x, 0);
+  const B = amortize(loan, rate, yrs, 0);
+  const A = extra > 0 ? amortize(loan, rate, yrs, extra) : B;
+  const ltv = price ? loan / price * 100 : 0;
+  const pPct = A.paid ? loan / A.paid * 100 : 100;
+
+  let h = `<div class="card hero">
+    <div class="lbl">Monthly payment</div>
+    <div class="big">${m2(B.pmt + extra)}</div>
+    <div class="note">${extra > 0 ? 'Includes ' + m2(extra) + ' extra every month' : 'Principal + interest'}${mode === 'o' ? ' · starts ' + when(S.s, off) + ', after handover' : ''}</div>
+  </div>`;
+
+  h += `<div class="card"><h2>Summary</h2>
+    <div class="stats">
+      <div class="stat"><div class="k">Loan amount</div><div class="v">${m0(loan)}</div></div>
+      <div class="stat"><div class="k">${mode === 'o' ? 'Paid before handover' : 'Down payment'}</div><div class="v">${m0(down)}</div></div>
+      <div class="stat"><div class="k">Total interest</div><div class="v">${m0(A.ti)}</div></div>
+      <div class="stat"><div class="k">Total repaid</div><div class="v">${m0(A.paid)}</div></div>
+      <div class="stat"><div class="k">Loan-to-value</div><div class="v">${ltv.toFixed(1)}%</div></div>
+      <div class="stat"><div class="k">Duration</div><div class="v">${dur(A.months)}</div></div>
+      <div class="stat"><div class="k">First payment</div><div class="v">${when(S.s, off)}</div></div>
+      <div class="stat"><div class="k">Last payment</div><div class="v">${A.months ? when(S.s, off + A.months - 1) : '-'}</div></div>
+    </div>
+    <div class="bar"><i style="width:${pPct}%;background:var(--pri)"></i><i style="width:${100 - pPct}%;background:var(--int)"></i></div>
+    <div class="legend"><span><b style="background:var(--pri)"></b>Principal ${pPct.toFixed(0)}%</span><span><b style="background:var(--int)"></b>Interest ${(100 - pPct).toFixed(0)}%</span></div>`;
+  if (ltv > 80) h += `<div class="call warn">Loan-to-value is above 80%. Many lenders cap financing at or below this. Confirm with your bank.</div>`;
+  if (extra > 0 && loan > 0) h += `<div class="call">Extra payments save <b>${m0(B.ti - A.ti)}</b> in interest and finish <b>${dur(B.months - A.months)}</b> earlier.</div>`;
+  h += `</div>`;
+
+  // 'buy' costs are paid when buying, 'loan' costs when the mortgage starts.
+  const feeItems = !S.f ? [] : [
+    ['Transfer fee (' + S.tf + '%)', price * S.tf / 100, 'buy'],
+    ['Agency fee (' + S.ag + '%)', price * S.ag / 100, 'buy'],
+    ['Trustee office fee (' + S.tr + '%)', price * S.tr / 100, 'buy'],
+    ['Mortgage registration (' + S.mr + '%)', loan * S.mr / 100, 'loan'],
+    ['Bank arrangement fee (' + S.bf + '%)', loan * S.bf / 100, 'loan'],
+    ['Other fixed costs', S.of, 'buy']
+  ];
+  const sum = list => list.reduce((t, i) => t + i[1], 0);
+  const feeRows = list => list.map(i => `<tr><td>${i[0]}</td><td>${m0(i[1])}</td></tr>`).join('');
+  const buyFees = feeItems.filter(i => i[2] === 'buy'), loanFees = feeItems.filter(i => i[2] === 'loan');
+  const feeTotal = sum(feeItems);
+
+  if (mode === 'o') {
+    const bookAmt = price * ob / 100, conAmt = price * oc / 100, handAmt = price * oh / 100;
+    if (S.ob + S.oc > 100) h += `<div class="card"><div class="call warn" style="margin:0">Booking plus construction is over 100%. Lower one of them.</div></div>`;
+    h += `<div class="card"><h2>Payment plan</h2><table>
+      <tr><th>Stage</th><th>Share</th><th>Amount</th></tr>
+      <tr><td>Booking<br><span class="fine">${when(S.s, 0)}</span></td><td>${ob}%</td><td>${m0(bookAmt)}</td></tr>
+      <tr><td>During construction<br><span class="fine">${om} months, about ${m0(conAmt / om)} a month</span></td><td>${oc}%</td><td>${m0(conAmt)}</td></tr>
+      <tr><td>On handover<br><span class="fine">${when(S.s, om)}, paid by your mortgage</span></td><td>${oh}%</td><td>${m0(handAmt)}</td></tr>
+      <tr class="tot"><td><b>Property price</b></td><td><b>100%</b></td><td><b>${m0(price)}</b></td></tr></table></div>`;
+    h += `<div class="card"><h2>Your cash, step by step</h2><table>
+      <tr><td>Booking and construction payments</td><td>${m0(bookAmt + conAmt)}</td></tr>
+      ${feeRows(buyFees)}
+      <tr class="tot"><td><b>Cash needed before handover</b></td><td><b>${m0(bookAmt + conAmt + sum(buyFees))}</b></td></tr>
+      ${S.f ? feeRows(loanFees) + `<tr class="tot"><td><b>Cash needed at handover</b></td><td><b>${m0(sum(loanFees))}</b></td></tr>` : ''}
+      </table></div>`;
+  } else if (S.f) {
+    h += `<div class="card"><h2>Cash needed upfront</h2><table>
+      <tr><td>Down payment</td><td>${m0(down)}</td></tr>
+      ${feeRows(feeItems)}
+      <tr class="tot"><td><b>Total cash</b></td><td><b>${m0(down + feeTotal)}</b></td></tr></table></div>`;
+  }
+
+  if (mode !== 's') {
+    h += `<div class="card"><h2>Total cost of the property</h2><table>
+      <tr><td>Property price</td><td>${m0(price)}</td></tr>
+      <tr><td>Fees and costs</td><td>${m0(feeTotal)}</td></tr>
+      <tr><td>Interest over the loan</td><td>${m0(A.ti)}</td></tr>
+      <tr class="tot"><td><b>Total</b></td><td><b>${m0(price + feeTotal + A.ti)}</b></td></tr></table>
+      ${S.f ? '' : '<p class="fine">Tick "Include buying costs" to add fees.</p>'}</div>`;
+  }
+
+  h += `<div class="card"><h2>Remaining balance</h2>${chart(A, B, loan) || '<p class="fine">Enter a price and down payment below 100% to see the chart.</p>'}
+    ${extra > 0 ? '<p class="fine">Dashed line: without extra payments.</p>' : ''}</div>`;
+
+  if (loan > 0) {
+    const rows = [-1, 0, 1, 2].map(d => rate + d).filter(v => v >= 0).map(v => {
+      const t = amortize(loan, v, yrs, 0), diff = t.pmt - B.pmt;
+      const cls = Math.abs(diff) < 0.005 ? '' : diff > 0 ? 'pos' : 'neg';
+      return `<tr><td>${v.toFixed(2)}%${Math.abs(v - rate) < 1e-9 ? ' (yours)' : ''}</td><td>${m2(t.pmt)}</td><td class="${cls}">${Math.abs(diff) < 0.005 ? '-' : (diff > 0 ? '+' : '') + m2(diff)}</td><td>${m0(t.ti)}</td></tr>`;
+    }).join('').replace(/ /g, ' ');
+    h += `<div class="card"><h2>What if the rate changes?</h2><table>
+      <tr><th>Rate</th><th>Monthly</th><th>vs. yours</th><th>Total interest</th></tr>${rows}</table></div>`;
+
+    h += `<div class="card"><details><summary>Year-by-year breakdown</summary><table style="margin-top:8px">
+      <tr><th>Year</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
+      ${A.years.map(r => `<tr><td>${r.y}</td><td>${m0(r.pr)}</td><td>${m0(r.i)}</td><td>${m0(r.bal)}</td></tr>`).join('')}
+      </table></details></div>`;
+  }
+
+  h += `<div class="actions">
+    <button class="pri" id="copy" type="button">Copy link with these numbers</button>
+    <button id="print" type="button">Print / save PDF</button>
+  </div>`;
+  if (location.protocol === 'file:') h += `<p class="fine noprint">Opened as a local file. The copied link only works once this page is hosted online.</p>`;
+  $('#out').innerHTML = h;
+  $('#handNote').textContent = 'On handover: ' + oh + '% = ' + m0(price * oh / 100) + '. Your mortgage finances this amount.';
+  $('#copy').onclick = copyLink;
+  $('#print').onclick = () => window.print();
+}
+
+function toast(t) {
+  const el = $('#toast'); el.textContent = t; el.classList.add('on');
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 1800);
+}
+function copyLink() {
+  const url = location.href;
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(() => toast('Link copied'), () => toast('Copy failed'));
+  else { const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); toast('Link copied'); } catch (e) { toast('Copy failed'); } t.remove(); }
+}
+
+const row = (k, label, min, max, step, unit) =>
+  `<div class="f"><label for="n_${k}">${label}</label>
+   <div class="in"><input type="text" id="n_${k}" data-k="${k}" inputmode="decimal" autocomplete="off">${unit === 'cur' ? '<span class="u cur"></span>' : '<span class="u">' + unit + '</span>'}</div>
+   <input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" aria-label="${label}"></div>`;
+
+$('#fields').innerHTML =
+  row('p', 'Property price', 100000, 20000000, 10000, 'cur') +
+  `<div id="rowDown"><div class="f"><label for="n_d">Down payment</label>
+   <div class="two">
+     <div class="in"><input type="text" id="n_d" data-k="d" inputmode="decimal" autocomplete="off"><span class="u">%</span></div>
+     <div class="in"><input type="text" id="n_da" data-k="da" inputmode="decimal" autocomplete="off" aria-label="Down payment amount"><span class="u cur"></span></div>
+   </div>
+   <input type="range" data-k="d" min="0" max="90" step="1" aria-label="Down payment percent"></div></div>` +
+  '<div id="rowPlan" hidden><div class="planhd">Payment plan</div>' +
+  row('ob', 'Booking payment', 0, 60, 1, '%') +
+  row('oc', 'During construction', 0, 90, 1, '%') +
+  row('om', 'Months until handover', 1, 72, 1, 'months') +
+  '<p class="fine" id="handNote"></p></div>' +
+  row('r', 'Interest rate (per year)', 0, 15, 0.05, '%') +
+  row('y', 'Loan term', 1, 35, 1, 'years') +
+  row('x', 'Extra monthly payment (optional)', 0, 20000, 100, 'cur');
+
+function sync(except) {
+  document.querySelectorAll('[data-k]').forEach(el => {
+    if (el === except) return;
+    const k = el.dataset.k;
+    const v = k === 'da' ? Math.round(S.p * S.d) / 100 : S[k];
+    if (el.type === 'checkbox') el.checked = !!v;
+    else if (el.type === 'radio') el.checked = el.value === S.m;
+    else el.value = v;
+  });
+  document.querySelectorAll('.cur').forEach(e => e.textContent = S.c);
+  $('#costs').hidden = !S.f;
+  $('#rowDown').hidden = S.m === 'o';
+  $('#rowPlan').hidden = S.m !== 'o';
+  $('#modeNote').textContent = MODE_NOTE[S.m];
+  document.querySelector('label[for=s]').textContent = S.m === 'o' ? 'Booking month' : 'First payment month';
+}
+
+// Accepts "1,510,000", "1 510 000", "5,25" and Arabic-Indic digits.
+function pn(s) {
+  s = String(s).replace(/[٠-٩]/g, c => c.charCodeAt(0) - 0x660).replace(/[۰-۹]/g, c => c.charCodeAt(0) - 0x6F0)
+    .replace(/٫/g, '.').replace(/[٬\s']/g, '');
+  if (/^\d+,\d{1,2}$/.test(s)) s = s.replace(',', '.');
+  return parseFloat(s.replace(/,/g, '')) || 0;
+}
+
+document.addEventListener('input', e => {
+  const el = e.target, k = el.dataset && el.dataset.k;
+  if (!k) return;
+  let v;
+  if (el.type === 'checkbox') v = el.checked ? 1 : 0;
+  else if (strKeys.includes(k)) v = el.value;
+  else { v = pn(el.value); if (!isFinite(v) || v < 0) v = 0; }
+  if (k === 'da') S.d = S.p > 0 ? Math.min(100, Math.round(v / S.p * 1e6) / 1e4) : 0;
+  else if (k === 'd') S.d = Math.min(100, v);
+  else S[k] = v;
+  if (k === 'm' && v !== 's') S.f = 1;
+  sync(k === 'm' ? null : el); save(); render();
+});
+
+load(); sync(); render();
+</script>
+</body>
+</html>

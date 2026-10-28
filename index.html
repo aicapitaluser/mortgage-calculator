@@ -131,6 +131,7 @@ button.pri{background:var(--navy);color:var(--gold);border-color:var(--navy);let
         <div class="two">
           <div class="f"><label for="n_tf">Transfer fee</label><div class="in"><input type="text" id="n_tf" data-k="tf" inputmode="decimal" autocomplete="off"><span class="u">% price</span></div></div>
           <div class="f"><label for="n_ag">Agency fee</label><div class="in"><input type="text" id="n_ag" data-k="ag" inputmode="decimal" autocomplete="off"><span class="u">% price</span></div></div>
+          <div class="f"><label for="n_tr">Trustee office fee</label><div class="in"><input type="text" id="n_tr" data-k="tr" inputmode="decimal" autocomplete="off"><span class="u">% price</span></div></div>
           <div class="f"><label for="n_mr">Mortgage registration</label><div class="in"><input type="text" id="n_mr" data-k="mr" inputmode="decimal" autocomplete="off"><span class="u">% loan</span></div></div>
           <div class="f"><label for="n_bf">Bank arrangement fee</label><div class="in"><input type="text" id="n_bf" data-k="bf" inputmode="decimal" autocomplete="off"><span class="u">% loan</span></div></div>
         </div>
@@ -141,7 +142,7 @@ button.pri{background:var(--navy);color:var(--gold);border-color:var(--navy);let
 
     <div class="stack" id="out"></div>
   </div>
-  <p class="fine" style="margin-top:16px">Estimate only. Assumes a fixed rate for the full term and equal monthly payments. Your bank's offer is the final word.</p>
+  <p class="fine" style="margin-top:16px"><b>A I Capital Mortgage Calculator 1.0.</b> Estimate only. Assumes a fixed rate for the full term and equal monthly payments. Your bank's offer is the final word.</p>
 </div>
 <div id="toast"></div>
 
@@ -151,7 +152,7 @@ const CUR = ['AED','USD','EUR','GBP','SAR','CAD','AUD'];
 const nm = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
 const def = {p:1500000, d:20, r:4.5, y:25, x:0, c:'AED',
   s:nm.getFullYear() + '-' + String(nm.getMonth() + 1).padStart(2, '0'),
-  f:0, tf:4, ag:2, mr:0.25, bf:1, of:0,
+  f:0, tf:4, ag:2, tr:0.25, mr:0.25, bf:1, of:0,
   m:'s', ob:20, oc:40, om:24};
 const S = {...def};
 const strKeys = ['c', 's', 'm'];
@@ -275,6 +276,7 @@ function render() {
   const feeItems = !S.f ? [] : [
     ['Transfer fee (' + S.tf + '%)', price * S.tf / 100, 'buy'],
     ['Agency fee (' + S.ag + '%)', price * S.ag / 100, 'buy'],
+    ['Trustee office fee (' + S.tr + '%)', price * S.tr / 100, 'buy'],
     ['Mortgage registration (' + S.mr + '%)', loan * S.mr / 100, 'loan'],
     ['Bank arrangement fee (' + S.bf + '%)', loan * S.bf / 100, 'loan'],
     ['Other fixed costs', S.of, 'buy']
