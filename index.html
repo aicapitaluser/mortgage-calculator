@@ -3,37 +3,43 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mortgage Calculator</title>
+<title>Mortgage Calculator | A I Capital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--ink:#14181f;--mute:#5d6676;--line:#e3e6ec;--accent:#0b6b5e;--accent-ink:#fff;--accent-soft:#e3f3f0;--warn:#a15c00;--warn-soft:#fdf1dc;--int:#d98a2b;--pri:#0b6b5e}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1317;--card:#171c22;--ink:#eef1f5;--mute:#98a2b3;--line:#2a313b;--accent:#3fc1ac;--accent-ink:#06211c;--accent-soft:#12302b;--warn:#f0b24d;--warn-soft:#33260f;--int:#e8a24a;--pri:#3fc1ac}}
+:root{color-scheme:light;--bg:#f2f1ec;--card:#fff;--ink:#0d1e2c;--mute:#5f6b75;--line:#e1ded3;--navy:#0a1825;--navy2:#1b3b4e;--accent:#0d1e2c;--accent-ink:#fff;--accent-soft:#f4edd2;--gold:#d8b560;--gold-ink:#8a6d22;--pos:#2f8f5b;--warn:#b0452e;--warn-soft:#fbe9e3;--int:#d8b560;--pri:#1b3b4e}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Sora,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .wrap{max-width:1080px;margin:0 auto;padding:16px}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 16px}
-h1{font-size:1.4rem;margin:0}
-.sub{color:var(--mute);font-size:.9rem;margin:2px 0 0}
+header{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;border-radius:18px;padding:20px;margin:8px 0 16px}
+.brandrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.mark{display:inline-block;border:1px solid rgba(216,181,96,.6);border-radius:8px;padding:6px 12px;font-weight:700;letter-spacing:.08em;font-size:.95rem}
+.mark small{display:block;font-size:.55rem;letter-spacing:.2em;color:var(--gold);font-weight:600}
+h1{font-size:1.9rem;margin:0;letter-spacing:.02em;text-transform:uppercase;font-weight:800}
+.sub{color:var(--gold);font-size:.92rem;margin:6px 0 0}
 .grid{display:grid;gap:16px}
 @media(min-width:860px){.grid{grid-template-columns:380px 1fr;align-items:start}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-.card h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin:0 0 12px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(13,30,44,.05)}
+.card h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold-ink);margin:0 0 12px;font-weight:700}
 .f{margin-bottom:16px}
 .f label{display:block;font-size:.9rem;font-weight:600;margin-bottom:6px}
 .in{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:var(--bg)}
-.in:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.in:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px var(--accent-soft)}
 .in input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.1rem;padding:10px 0;outline:0}
 .u{color:var(--mute);font-size:.85rem}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-input[type=range]{width:100%;margin:10px 0 0;accent-color:var(--accent)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:8px}
+.two .in{padding:0 10px}
+input[type=range]{width:100%;margin:10px 0 0;accent-color:var(--gold-ink)}
 select,input[type=month]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
-header select{padding:6px 8px}
+header select{padding:6px 8px;background:transparent;color:#fff;border-color:rgba(216,181,96,.6)}
+header select option{color:#0d1e2c}
 .chk{display:flex;gap:8px;align-items:center;font-weight:600;font-size:.9rem;cursor:pointer}
-.chk input{width:18px;height:18px;accent-color:var(--accent)}
+.chk input{width:18px;height:18px;accent-color:var(--gold-ink)}
 .costs{margin-top:12px}
-.hero{background:var(--accent);color:var(--accent-ink);border:0}
-.hero .lbl{font-size:.85rem;opacity:.85}
-.hero .big{font-size:2.4rem;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
-.hero .note{font-size:.85rem;opacity:.85;margin-top:2px}
+.hero{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;border:0}
+.hero .lbl{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.hero .big{font-size:2.5rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;color:#fff}
+.hero .note{font-size:.85rem;color:var(--gold);margin-top:2px}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
 @media(min-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
 .stat .k{font-size:.78rem;color:var(--mute)}
@@ -45,17 +51,19 @@ header select{padding:6px 8px}
 .call{border-radius:10px;padding:10px 12px;font-size:.9rem;margin-top:16px;background:var(--accent-soft)}
 .call.warn{background:var(--warn-soft);color:var(--warn)}
 table{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
-th,td{text-align:right;padding:7px 4px;border-bottom:1px solid var(--line)}
+th,td{text-align:right;padding:8px 8px;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left}
-th{color:var(--mute);font-weight:600;font-size:.78rem}
-td.pos{color:var(--warn)}td.neg{color:var(--accent)}
+th{background:#142a3a;color:#fff;font-weight:600;font-size:.75rem}
+th:first-child{border-radius:8px 0 0 8px}th:last-child{border-radius:0 8px 8px 0}
+tr.tot td{background:#f4edd2;border-bottom:0}
+td.pos{color:var(--warn)}td.neg{color:var(--pos)}
 .stack>*+*{margin-top:16px}
 svg{width:100%;height:auto;display:block}
 svg text{fill:var(--mute);font-size:11px}
 details summary{cursor:pointer;font-weight:600;font-size:.9rem}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 button{font:inherit;font-weight:600;border-radius:10px;padding:10px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
-button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.pri{background:var(--navy);color:var(--gold);border-color:var(--navy);letter-spacing:.02em}
 .fine{color:var(--mute);font-size:.78rem}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:99px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
 #toast.on{opacity:1}
@@ -65,13 +73,14 @@ button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--a
 <body>
 <div class="wrap">
   <header>
-    <div>
-      <h1>Mortgage Calculator</h1>
-      <p class="sub">Change any number. Results update instantly.</p>
+    <div class="brandrow">
+      <span class="mark">A I CAPITAL<small>REAL ESTATE</small></span>
+      <select id="cur" data-k="c" aria-label="Currency">
+        <option>AED</option><option>USD</option><option>EUR</option><option>GBP</option><option>SAR</option><option>CAD</option><option>AUD</option>
+      </select>
     </div>
-    <select id="cur" data-k="c" aria-label="Currency">
-      <option>AED</option><option>USD</option><option>EUR</option><option>GBP</option><option>SAR</option><option>CAD</option><option>AUD</option>
-    </select>
+    <h1>Mortgage Calculator</h1>
+    <p class="sub">Change any number. Your results update instantly.</p>
   </header>
 
   <div class="grid">
@@ -174,7 +183,7 @@ function chart(A, B, loan) {
   }).join('');
   const dashed = A.months !== B.months ? `<path d="${line(B)}" fill="none" stroke="var(--mute)" stroke-width="1.5" stroke-dasharray="4 4"/>` : '';
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Remaining balance over time">
-    <path d="${area}" fill="var(--pri)" opacity=".15"/>
+    <path d="${area}" fill="var(--gold)" opacity=".3"/>
     ${dashed}
     <path d="${line(A)}" fill="none" stroke="var(--pri)" stroke-width="2.5"/>
     <line x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)"/>
@@ -227,7 +236,7 @@ function render() {
     h += `<div class="card"><h2>Cash needed upfront</h2><table>
       <tr><td>Down payment</td><td>${m0(down)}</td></tr>
       ${items.map(i => `<tr><td>${i[0]}</td><td>${m0(i[1])}</td></tr>`).join('')}
-      <tr><td><b>Total cash</b></td><td><b>${m0(down + fees)}</b></td></tr></table></div>`;
+      <tr class="tot"><td><b>Total cash</b></td><td><b>${m0(down + fees)}</b></td></tr></table></div>`;
   }
 
   h += `<div class="card"><h2>Remaining balance</h2>${chart(A, B, loan) || '<p class="fine">Enter a price and down payment below 100% to see the chart.</p>'}
