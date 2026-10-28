@@ -17,8 +17,29 @@ header{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;bo
 .mark small{display:block;font-size:.55rem;letter-spacing:.2em;color:var(--gold);font-weight:600}
 h1{font-size:1.9rem;margin:0;letter-spacing:.02em;text-transform:uppercase;font-weight:800}
 .sub{color:var(--gold);font-size:.92rem;margin:6px 0 0}
-.grid{display:grid;gap:16px}
-@media(min-width:860px){.grid{grid-template-columns:380px 1fr;align-items:start}}
+.grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.grid>*{min-width:0}
+html,body{overflow-x:hidden}
+@media(min-width:860px){.grid{grid-template-columns:380px minmax(0,1fr);align-items:start}}
+@media(max-width:560px){
+  .wrap{padding:10px}
+  header{padding:14px;border-radius:16px;margin:4px 0 12px}
+  .brandrow{margin-bottom:12px}
+  h1{font-size:1.35rem}
+  .sub{font-size:.82rem}
+  .grid,.stack>*+*{gap:12px}.stack>*+*{margin-top:12px}
+  .card{padding:14px;border-radius:14px}
+  .f{margin-bottom:14px}
+  .in input{font-size:1rem;padding:9px 0}
+  .hero .big{font-size:1.9rem}
+  .stats{gap:10px}
+  .stat .v{font-size:1rem}
+  th,td{padding:7px 3px;font-size:.72rem}
+  th{font-size:.64rem}
+  .card{overflow-x:auto}
+  .actions button{flex:1 1 100%}
+  table{table-layout:auto}
+}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(13,30,44,.05)}
 .card h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold-ink);margin:0 0 12px;font-weight:700}
 .f{margin-bottom:16px}
@@ -247,7 +268,7 @@ function render() {
       const t = amortize(loan, v, yrs, 0), diff = t.pmt - B.pmt;
       const cls = Math.abs(diff) < 0.005 ? '' : diff > 0 ? 'pos' : 'neg';
       return `<tr><td>${v.toFixed(2)}%${Math.abs(v - rate) < 1e-9 ? ' (yours)' : ''}</td><td>${m2(t.pmt)}</td><td class="${cls}">${Math.abs(diff) < 0.005 ? '-' : (diff > 0 ? '+' : '') + m2(diff)}</td><td>${m0(t.ti)}</td></tr>`;
-    }).join('');
+    }).join('').replace(/ /g, ' ');
     h += `<div class="card"><h2>What if the rate changes?</h2><table>
       <tr><th>Rate</th><th>Monthly</th><th>vs. yours</th><th>Total interest</th></tr>${rows}</table></div>`;
 
