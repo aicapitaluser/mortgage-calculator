@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortgage Calculator</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#14181f;--mute:#5d6676;--line:#e3e6ec;--accent:#0b6b5e;--accent-ink:#fff;--accent-soft:#e3f3f0;--warn:#a15c00;--warn-soft:#fdf1dc;--int:#d98a2b;--pri:#0b6b5e}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1317;--card:#171c22;--ink:#eef1f5;--mute:#98a2b3;--line:#2a313b;--accent:#3fc1ac;--accent-ink:#06211c;--accent-soft:#12302b;--warn:#f0b24d;--warn-soft:#33260f;--int:#e8a24a;--pri:#3fc1ac}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:16px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 16px}
+h1{font-size:1.4rem;margin:0}
+.sub{color:var(--mute);font-size:.9rem;margin:2px 0 0}
+.grid{display:grid;gap:16px}
+@media(min-width:860px){.grid{grid-template-columns:380px 1fr;align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin:0 0 12px;font-weight:600}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:.9rem;font-weight:600;margin-bottom:6px}
+.in{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:var(--bg)}
+.in:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.in input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.1rem;padding:10px 0;outline:0}
+.u{color:var(--mute);font-size:.85rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input[type=range]{width:100%;margin:10px 0 0;accent-color:var(--accent)}
+select,input[type=month]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+header select{padding:6px 8px}
+.chk{display:flex;gap:8px;align-items:center;font-weight:600;font-size:.9rem;cursor:pointer}
+.chk input{width:18px;height:18px;accent-color:var(--accent)}
+.costs{margin-top:12px}
+.hero{background:var(--accent);color:var(--accent-ink);border:0}
+.hero .lbl{font-size:.85rem;opacity:.85}
+.hero .big{font-size:2.4rem;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
+.hero .note{font-size:.85rem;opacity:.85;margin-top:2px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+@media(min-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat .k{font-size:.78rem;color:var(--mute)}
+.stat .v{font-size:1.1rem;font-weight:650;font-variant-numeric:tabular-nums}
+.bar{display:flex;height:12px;border-radius:99px;overflow:hidden;margin:16px 0 6px;background:var(--line)}
+.bar i{display:block;height:100%}
+.legend{display:flex;gap:16px;font-size:.82rem;color:var(--mute);flex-wrap:wrap}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:baseline}
+.call{border-radius:10px;padding:10px 12px;font-size:.9rem;margin-top:16px;background:var(--accent-soft)}
+.call.warn{background:var(--warn-soft);color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:7px 4px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mute);font-weight:600;font-size:.78rem}
+td.pos{color:var(--warn)}td.neg{color:var(--accent)}
+.stack>*+*{margin-top:16px}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--mute);font-size:11px}
+details summary{cursor:pointer;font-weight:600;font-size:.9rem}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-weight:600;border-radius:10px;padding:10px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.fine{color:var(--mute);font-size:.78rem}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:99px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+@media print{.actions,input[type=range],header select,#toast,.noprint{display:none!important}body{background:#fff}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Mortgage Calculator</h1>
+      <p class="sub">Change any number. Results update instantly.</p>
+    </div>
+    <select id="cur" data-k="c" aria-label="Currency">
+      <option>AED</option><option>USD</option><option>EUR</option><option>GBP</option><option>SAR</option><option>CAD</option><option>AUD</option>
+    </select>
+  </header>
+
+  <div class="grid">
+    <form class="card" id="form" onsubmit="return false">
+      <h2>Your numbers</h2>
+      <div id="fields"></div>
+      <div class="f">
+        <label for="s">First payment month</label>
+        <input type="month" id="s" data-k="s">
+      </div>
+      <label class="chk"><input type="checkbox" id="fchk" data-k="f"> Include buying costs</label>
+      <div class="costs" id="costs" hidden>
+        <div class="two">
+          <div class="f"><label for="n_tf">Transfer fee</label><div class="in"><input type="number" id="n_tf" data-k="tf" step="any"><span class="u">% price</span></div></div>
+          <div class="f"><label for="n_ag">Agency fee</label><div class="in"><input type="number" id="n_ag" data-k="ag" step="any"><span class="u">% price</span></div></div>
+          <div class="f"><label for="n_mr">Mortgage registration</label><div class="in"><input type="number" id="n_mr" data-k="mr" step="any"><span class="u">% loan</span></div></div>
+          <div class="f"><label for="n_bf">Bank arrangement fee</label><div class="in"><input type="number" id="n_bf" data-k="bf" step="any"><span class="u">% loan</span></div></div>
+        </div>
+        <div class="f"><label for="n_of">Other fixed costs (valuation, trustee, etc.)</label><div class="in"><input type="number" id="n_of" data-k="of" step="any"><span class="u cur"></span></div></div>
+        <p class="fine">Defaults follow typical Dubai rates. Edit to match your case.</p>
+      </div>
+    </form>
+
+    <div class="stack" id="out"></div>
+  </div>
+  <p class="fine" style="margin-top:16px">Estimate only. Assumes a fixed rate for the full term and equal monthly payments. Your bank's offer is the final word.</p>
+</div>
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const CUR = ['AED','USD','EUR','GBP','SAR','CAD','AUD'];
+const nm = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+const def = {p:1500000, d:20, r:4.5, y:25, x:0, c:'AED',
+  s:nm.getFullYear() + '-' + String(nm.getMonth() + 1).padStart(2, '0'),
+  f:0, tf:4, ag:2, mr:0.25, bf:1, of:0};
+const S = {...def};
+const strKeys = ['c', 's'];
+
+function load() {
+  const q = new URLSearchParams(location.hash.slice(1));
+  for (const k in def) {
+    if (!q.has(k)) continue;
+    const v = q.get(k);
+    S[k] = strKeys.includes(k) ? v : (isFinite(+v) ? +v : def[k]);
+  }
+  if (!CUR.includes(S.c)) S.c = def.c;
+  if (!/^\d{4}-\d{2}$/.test(S.s)) S.s = def.s;
+}
+function save() {
+  const q = new URLSearchParams();
+  for (const k in S) if (S[k] !== def[k]) q.set(k, S[k]);
+  const h = q.toString();
+  try { history.replaceState(null, '', h ? '#' + h : location.pathname + location.search); }
+  catch (e) { location.hash = h; }
+}
+
+const fmtCache = {};
+function money(dec) {
+  const key = S.c + dec;
+  return fmtCache[key] || (fmtCache[key] = new Intl.NumberFormat('en-US', {style:'currency', currency:S.c, currencyDisplay:'code', minimumFractionDigits:dec, maximumFractionDigits:dec}));
+}
+const m0 = v => money(0).format(v);
+const m2 = v => money(2).format(v);
+const dur = n => { const y = Math.floor(n / 12), m = n % 12; return (y ? y + ' yr' + (y > 1 ? 's' : '') : '') + (y && m ? ' ' : '') + (m ? m + ' mo' : '') || '0 mo'; };
+
+function amortize(L, rate, yrs, extra) {
+  const n = yrs * 12, r = rate / 1200;
+  const pmt = L <= 0 ? 0 : (r === 0 ? L / n : L * r / (1 - Math.pow(1 + r, -n)));
+  let bal = L, ti = 0, m = 0;
+  const bals = [], years = [];
+  while (L > 0 && bal > 0.005 && m < n + 1) {
+    const i = bal * r;
+    let pr = pmt - i + extra;
+    if (pr > bal) pr = bal;
+    bal -= pr; ti += i; m++;
+    bals.push(bal);
+    const yi = Math.floor((m - 1) / 12);
+    const row = years[yi] || (years[yi] = {y:yi + 1, pr:0, i:0, bal:0});
+    row.pr += pr; row.i += i; row.bal = bal;
+  }
+  return {pmt, months:m, ti, paid:L + ti, bals, years};
+}
+
+function when(startStr, addMonths) {
+  const [y, mo] = startStr.split('-').map(Number);
+  return new Date(y, mo - 1 + addMonths, 1).toLocaleDateString('en', {month:'short', year:'numeric'});
+}
+
+function chart(A, B, loan) {
+  if (loan <= 0 || !B.months) return '';
+  const W = 600, H = 200, pl = 8, pr = 8, pt = 8, pb = 22, n = B.months;
+  const X = m => pl + (W - pl - pr) * m / n;
+  const Y = v => pt + (H - pt - pb) * (1 - v / loan);
+  const line = a => 'M' + X(0).toFixed(1) + ',' + Y(loan).toFixed(1) + a.bals.map((v, i) => 'L' + X(i + 1).toFixed(1) + ',' + Y(v).toFixed(1)).join('');
+  const area = line(A) + 'L' + X(A.months).toFixed(1) + ',' + Y(0).toFixed(1) + 'L' + X(0).toFixed(1) + ',' + Y(0).toFixed(1) + 'Z';
+  const ticks = [0, .25, .5, .75, 1].map(f => {
+    const m = Math.round(n * f);
+    return `<text x="${X(m).toFixed(1)}" y="${H - 6}" text-anchor="${f === 0 ? 'start' : f === 1 ? 'end' : 'middle'}">${f === 0 ? 'Start' : 'Year ' + (m / 12).toFixed(m % 12 ? 1 : 0)}</text>`;
+  }).join('');
+  const dashed = A.months !== B.months ? `<path d="${line(B)}" fill="none" stroke="var(--mute)" stroke-width="1.5" stroke-dasharray="4 4"/>` : '';
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Remaining balance over time">
+    <path d="${area}" fill="var(--pri)" opacity=".15"/>
+    ${dashed}
+    <path d="${line(A)}" fill="none" stroke="var(--pri)" stroke-width="2.5"/>
+    <line x1="${pl}" x2="${W - pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)"/>
+    ${ticks}</svg>`;
+}
+
+function render() {
+  const price = Math.max(S.p, 0);
+  const down = Math.min(price * S.d / 100, price);
+  const loan = price - down;
+  const yrs = Math.min(40, Math.max(1, Math.round(S.y)));
+  const rate = Math.max(S.r, 0), extra = Math.max(S.x, 0);
+  const B = amortize(loan, rate, yrs, 0);
+  const A = extra > 0 ? amortize(loan, rate, yrs, extra) : B;
+  const ltv = price ? loan / price * 100 : 0;
+  const pPct = A.paid ? loan / A.paid * 100 : 100;
+
+  let h = `<div class="card hero">
+    <div class="lbl">Monthly payment</div>
+    <div class="big">${m2(B.pmt + extra)}</div>
+    <div class="note">${extra > 0 ? 'Includes ' + m2(extra) + ' extra every month' : 'Principal + interest'}</div>
+  </div>`;
+
+  h += `<div class="card"><h2>Summary</h2>
+    <div class="stats">
+      <div class="stat"><div class="k">Loan amount</div><div class="v">${m0(loan)}</div></div>
+      <div class="stat"><div class="k">Down payment</div><div class="v">${m0(down)}</div></div>
+      <div class="stat"><div class="k">Total interest</div><div class="v">${m0(A.ti)}</div></div>
+      <div class="stat"><div class="k">Total repaid</div><div class="v">${m0(A.paid)}</div></div>
+      <div class="stat"><div class="k">Loan-to-value</div><div class="v">${ltv.toFixed(1)}%</div></div>
+      <div class="stat"><div class="k">Duration</div><div class="v">${dur(A.months)}</div></div>
+      <div class="stat"><div class="k">First payment</div><div class="v">${when(S.s, 0)}</div></div>
+      <div class="stat"><div class="k">Last payment</div><div class="v">${A.months ? when(S.s, A.months - 1) : '-'}</div></div>
+    </div>
+    <div class="bar"><i style="width:${pPct}%;background:var(--pri)"></i><i style="width:${100 - pPct}%;background:var(--int)"></i></div>
+    <div class="legend"><span><b style="background:var(--pri)"></b>Principal ${pPct.toFixed(0)}%</span><span><b style="background:var(--int)"></b>Interest ${(100 - pPct).toFixed(0)}%</span></div>`;
+  if (ltv > 80) h += `<div class="call warn">Loan-to-value is above 80%. Many lenders cap financing at or below this. Confirm with your bank.</div>`;
+  if (extra > 0 && loan > 0) h += `<div class="call">Extra payments save <b>${m0(B.ti - A.ti)}</b> in interest and finish <b>${dur(B.months - A.months)}</b> earlier.</div>`;
+  h += `</div>`;
+
+  if (S.f) {
+    const items = [
+      ['Transfer fee (' + S.tf + '%)', price * S.tf / 100],
+      ['Agency fee (' + S.ag + '%)', price * S.ag / 100],
+      ['Mortgage registration (' + S.mr + '%)', loan * S.mr / 100],
+      ['Bank arrangement fee (' + S.bf + '%)', loan * S.bf / 100],
+      ['Other fixed costs', S.of]
+    ];
+    const fees = items.reduce((t, i) => t + i[1], 0);
+    h += `<div class="card"><h2>Cash needed upfront</h2><table>
+      <tr><td>Down payment</td><td>${m0(down)}</td></tr>
+      ${items.map(i => `<tr><td>${i[0]}</td><td>${m0(i[1])}</td></tr>`).join('')}
+      <tr><td><b>Total cash</b></td><td><b>${m0(down + fees)}</b></td></tr></table></div>`;
+  }
+
+  h += `<div class="card"><h2>Remaining balance</h2>${chart(A, B, loan) || '<p class="fine">Enter a price and down payment below 100% to see the chart.</p>'}
+    ${extra > 0 ? '<p class="fine">Dashed line: without extra payments.</p>' : ''}</div>`;
+
+  if (loan > 0) {
+    const rows = [-1, 0, 1, 2].map(d => rate + d).filter(v => v >= 0).map(v => {
+      const t = amortize(loan, v, yrs, 0), diff = t.pmt - B.pmt;
+      const cls = Math.abs(diff) < 0.005 ? '' : diff > 0 ? 'pos' : 'neg';
+      return `<tr><td>${v.toFixed(2)}%${Math.abs(v - rate) < 1e-9 ? ' (yours)' : ''}</td><td>${m2(t.pmt)}</td><td class="${cls}">${Math.abs(diff) < 0.005 ? '-' : (diff > 0 ? '+' : '') + m2(diff)}</td><td>${m0(t.ti)}</td></tr>`;
+    }).join('');
+    h += `<div class="card"><h2>What if the rate changes?</h2><table>
+      <tr><th>Rate</th><th>Monthly</th><th>vs. yours</th><th>Total interest</th></tr>${rows}</table></div>`;
+
+    h += `<div class="card"><details><summary>Year-by-year breakdown</summary><table style="margin-top:8px">
+      <tr><th>Year</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
+      ${A.years.map(r => `<tr><td>${r.y}</td><td>${m0(r.pr)}</td><td>${m0(r.i)}</td><td>${m0(r.bal)}</td></tr>`).join('')}
+      </table></details></div>`;
+  }
+
+  h += `<div class="actions">
+    <button class="pri" id="copy" type="button">Copy link with these numbers</button>
+    <button id="print" type="button">Print / save PDF</button>
+  </div>`;
+  if (location.protocol === 'file:') h += `<p class="fine noprint">Opened as a local file. The copied link only works once this page is hosted online.</p>`;
+  $('#out').innerHTML = h;
+  $('#copy').onclick = copyLink;
+  $('#print').onclick = () => window.print();
+}
+
+function toast(t) {
+  const el = $('#toast'); el.textContent = t; el.classList.add('on');
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 1800);
+}
+function copyLink() {
+  const url = location.href;
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(() => toast('Link copied'), () => toast('Copy failed'));
+  else { const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); toast('Link copied'); } catch (e) { toast('Copy failed'); } t.remove(); }
+}
+
+const row = (k, label, min, max, step, unit) =>
+  `<div class="f"><label for="n_${k}">${label}</label>
+   <div class="in"><input type="number" id="n_${k}" data-k="${k}" step="any" inputmode="decimal">${unit === 'cur' ? '<span class="u cur"></span>' : '<span class="u">' + unit + '</span>'}</div>
+   <input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}" aria-label="${label}"></div>`;
+
+$('#fields').innerHTML =
+  row('p', 'Property price', 100000, 20000000, 10000, 'cur') +
+  `<div class="f"><label for="n_d">Down payment</label>
+   <div class="two">
+     <div class="in"><input type="number" id="n_d" data-k="d" step="any" inputmode="decimal"><span class="u">%</span></div>
+     <div class="in"><input type="number" id="n_da" data-k="da" step="any" inputmode="decimal" aria-label="Down payment amount"><span class="u cur"></span></div>
+   </div>
+   <input type="range" data-k="d" min="0" max="90" step="1" aria-label="Down payment percent"></div>` +
+  row('r', 'Interest rate (per year)', 0, 15, 0.05, '%') +
+  row('y', 'Loan term', 1, 35, 1, 'years') +
+  row('x', 'Extra monthly payment (optional)', 0, 20000, 100, 'cur');
+
+function sync(except) {
+  document.querySelectorAll('[data-k]').forEach(el => {
+    if (el === except) return;
+    const k = el.dataset.k;
+    const v = k === 'da' ? Math.round(S.p * S.d) / 100 : S[k];
+    if (el.type === 'checkbox') el.checked = !!v; else el.value = v;
+  });
+  document.querySelectorAll('.cur').forEach(e => e.textContent = S.c);
+  $('#costs').hidden = !S.f;
+}
+
+document.addEventListener('input', e => {
+  const el = e.target, k = el.dataset && el.dataset.k;
+  if (!k) return;
+  let v;
+  if (el.type === 'checkbox') v = el.checked ? 1 : 0;
+  else if (strKeys.includes(k)) v = el.value;
+  else { v = el.value === '' ? 0 : parseFloat(el.value); if (!isFinite(v) || v < 0) v = 0; }
+  if (k === 'da') S.d = S.p > 0 ? Math.min(100, Math.round(v / S.p * 1e6) / 1e4) : 0;
+  else if (k === 'd') S.d = Math.min(100, v);
+  else S[k] = v;
+  sync(el); save(); render();
+});
+
+load(); sync(); render();
+</script>
+</body>
+</html>
